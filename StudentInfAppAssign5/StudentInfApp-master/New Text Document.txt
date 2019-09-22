@@ -1,0 +1,110 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BITM_LT1
+{
+    public partial class Student : Form
+    {
+        private float gpaInFloat;
+        List<string> id=new List<string>();
+        List<string> name = new List<string>();
+        List<string> address = new List<string>();
+        List<string> mobile = new List<string>();
+        List<string> age = new List<string>();
+        List<string> gpa = new List<string>();
+        public Student()
+        {
+            InitializeComponent();
+        }
+
+        private void addButton_Click(object sender, EventArgs e)
+        {
+
+            if ((textBoxID.Text.Equals("") || textBoxID.Text.Length != 4 ) )
+            {
+                MessageBox.Show("ID Must not be Blank and Must be 4 Char");
+          
+            }
+
+            else if (checkDuplicateID());
+                
+            else if (textBoxName.Text.Equals("") || textBoxName.Text.Length > 30)
+            {
+                MessageBox.Show("Name Must not be Blank and not more than 30 Char");
+            }
+            else if (textBoxMobile.Text.Equals("") || textBoxMobile.Text.Length!=11)
+            {
+                MessageBox.Show("Mobile Must not be Blank and Must Be 11 Digit");
+            }
+            else if (checkDuplicateMobile()) ;
+            else if (textBoxGPA.Text.Equals("") || (float.Parse(textBoxGPA.Text) < 0 || float.Parse(textBoxGPA.Text) > 4))
+            {
+                MessageBox.Show("GPA Must not be Blank and Between 0-4");
+            }
+            else
+            {
+                id.Add(textBoxID.Text);
+                name.Add(textBoxName.Text);
+                mobile.Add(textBoxMobile.Text);
+                if(textBoxAge.Text.Equals(""))
+                    age.Add("0");
+                else
+                    age.Add(textBoxAge.Text);
+                if(textBoxAddress.Text.Equals(""))
+                    address.Add("0");
+                else
+                    address.Add(textBoxAddress.Text);
+                gpa.Add(textBoxGPA.Text);
+
+                dataView.Text="Student Details :"+"\nID : "+textBoxID.Text+"\nName : "+textBoxName.Text + "\nMobile : " + textBoxMobile.Text
+                              + "\nAge : " + textBoxAge.Text + "\nAddress : " + textBoxAddress.Text + "\nGPA : " + textBoxGPA.Text;
+
+                textBoxID.Clear();
+                textBoxName.Clear();
+                textBoxMobile.Clear();
+                textBoxAge.Clear();
+                textBoxAddress.Clear();
+                textBoxGPA.Clear();
+                MessageBox.Show("Added Successfully");
+            }
+        }
+
+        private Boolean checkDuplicateID()
+        {
+            for (int j = 0; j < id.Count(); j++)
+            {
+                if ((textBoxID.Text).Equals(id[j]))
+                {
+                    MessageBox.Show("This ID used Before\nUse an Unique ID");
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+        private Boolean checkDuplicateMobile()
+        {
+            for (int j = 0; j < id.Count(); j++)
+            {
+                if ((textBoxMobile.Text).Equals(mobile[j]))
+                {
+                    MessageBox.Show("This Mobile used Before\nUse an Unique ID");
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
