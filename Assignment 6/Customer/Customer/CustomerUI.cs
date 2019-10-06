@@ -244,9 +244,12 @@ namespace Customer
             }
         }
 
-        private void nameTextBox_TextChanged(object sender, EventArgs e)
-        {
 
+        private bool IsNameExists()
+        {
+            bool isExist = false;
+            return isExist;
         }
+        
     }
 }
