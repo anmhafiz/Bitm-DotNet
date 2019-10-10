@@ -5,27 +5,30 @@ using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 using Customer.Repository;
+using Customer.Model;
+
 namespace Customer.BLL
+
 {
     public class CustomerManager
     {
         CustomerRepository _customerRepository = new CustomerRepository();
 
-        public bool Add(string nameTextBox, string contactTextBox, string addressTextBox)
+        public bool Add(Cus cus)
         {
 
-            return _customerRepository.Add(nameTextBox,contactTextBox,addressTextBox );
+            return _customerRepository.Add(cus );
 
 
         }
 
-        public bool IsNameExist(string nameTextBox)
+        public bool IsNameExist(Cus cus)
         {
-            return _customerRepository.IsNameExist(nameTextBox);
+            return _customerRepository.IsNameExist(cus);
         }
-        public bool Delete(string nameTextBox )
+        public bool Delete(Cus cus )
         {
-            return _customerRepository.Delete(nameTextBox);
+            return _customerRepository.Delete(cus);
 
         }
 
@@ -34,6 +37,12 @@ namespace Customer.BLL
             return _customerRepository.ShowData();
 
         }
-        
+
+        public DataTable cusCombo()
+        {
+            return _customerRepository.cusCombo();
+
+        }
+
     }
 }

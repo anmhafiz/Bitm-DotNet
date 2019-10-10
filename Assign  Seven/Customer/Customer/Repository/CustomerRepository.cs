@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
+using Customer.Model;
 
 namespace Customer.Repository
 {
@@ -12,13 +13,13 @@ namespace Customer.Repository
     {
         string connectionString = @"Server =DESKTOP-OVFETI4\SQLEXPRESS ; Database = CoffeShop; Integrated Security = True";
 
-        public bool Add(string nameTextBox, string contactTextBox, string addressTextBox)
+        public bool Add(Cus cus)
         {
             bool isAdded = false;
             try
             {
                 SqlConnection sqlConnection = new SqlConnection(connectionString);
-                string commandString = "INSERT INTO Customer (Name, Contact, Address) VALUES('" + nameTextBox + "', '" + contactTextBox + "', '" + addressTextBox + "')";
+                string commandString = "INSERT INTO Customer (Code,Name, Contact, Address, District) VALUES('" + cus.Code + "', '" + cus.Name + "', '" + cus.Contact + "', '"+ cus.Address + "', '" + cus.District + "')";
                 SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
 
                 sqlConnection.Open();
@@ -39,13 +40,13 @@ namespace Customer.Repository
             return isAdded;
         }
 
-        public bool Delete(string nameTextBox)
+        public bool Delete(Cus cus)
         {
             bool isDelete = false;
             try
             {
                 SqlConnection sqlConnection = new SqlConnection(connectionString);
-                string commandString = "DELETE FROM Customer WHERE Name = '" + nameTextBox + "'";
+                string commandString = "DELETE FROM Customer WHERE Name = '" + cus.Name + "'";
                 SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
 
                 sqlConnection.Open();
@@ -67,7 +68,7 @@ namespace Customer.Repository
         }
 
 
-        public bool IsNameExist(string nameTextBox)
+        public bool IsNameExist(Cus cus)
         {
             bool isExist = false;
 
@@ -75,7 +76,7 @@ namespace Customer.Repository
 
 
             SqlConnection sqlConnection = new SqlConnection(connectionString);
-            string commandString = @"SELECT Name,Contact,Address FROM Customer WHERE Name = '" + nameTextBox + "' ";
+            string commandString = @"SELECT Name,Contact,Address FROM Customer WHERE Name = '" + cus.Name + "' ";
             SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
 
             SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
@@ -97,7 +98,7 @@ namespace Customer.Repository
         public DataTable ShowData()
         {
             SqlConnection sqlConnection = new SqlConnection(connectionString);
-            string commandString = @"SELECT Name, Contact, Address FROM Customer";
+            string commandString = @"SELECT Code,Name, Contact, Address, District FROM Customer";
             SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
             sqlConnection.Open();
             SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
@@ -124,8 +125,32 @@ namespace Customer.Repository
 
 
 
+        public DataTable cusCombo()
+        {
+            SqlConnection sqlConnection = new SqlConnection(connectionString);
+            string commandString = @"SELECT Code,Name, Contact, Address, District FROM Customer";
+            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
+            sqlConnection.Open();
+            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+            DataTable dataTable = new DataTable();
+            int isFill = sqlDataAdapter.Fill(dataTable);
 
+            //if (isFill > 0)
+            //{
+            //    dataGridView.DataSource = dataTable;
+            //    return 1;
+            //}
+            //else
+            //{
+            //    dataGridView.DataSource = "";
+            //    return 0;
+            //}
+            sqlConnection.Close();
 
+            return dataTable;
+
+        }
+        
 
 
     }

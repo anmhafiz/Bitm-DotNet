@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Customer.BLL;
+using Customer.Model;
+
 
 namespace Customer
 {
@@ -17,7 +19,7 @@ namespace Customer
     {
         CustomerManager _customerManager = new CustomerManager();
 
-        string connectionString = @"Server =DESKTOP-KMRIBC2\SQLEXPRESS ; Database = CoffeShop; Integrated Security = True";
+        string connectionString = @"Server =DESKTOP-OVFETI4\SQLEXPRESS ; Database = CoffeShop; Integrated Security = True";
 
 
         public CustomerUI()
@@ -33,9 +35,11 @@ namespace Customer
 
         public void Clear()
         {
+            codeTextBox.Text = "";
             nameTextBox.Text = "";
             contactTextBox.Text = "";
             addressTextBox.Text = "";
+            districtComboBox.Text = "";
            
 
         }
@@ -91,8 +95,29 @@ namespace Customer
 
         private void addButton_Click(object sender, EventArgs e)
         {
+            Cus cus = new Cus();
 
-            if (_customerManager.IsNameExist(nameTextBox.Text))
+            if (nameTextBox.Text == "" || contactTextBox.Text == "" || addressTextBox.Text == "")
+            {
+                MessageBox.Show("Field must not be emptay..");
+                Clear();
+                return;
+
+            }
+
+
+
+            if (Code.Text.Length > 4)
+            {
+                MessageBox.Show("Can Enter only Four Characters in this Textbox.", "Textbox", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            if (Contact.Text.Length >11)
+            {
+                MessageBox.Show("Can Enter only Eleven Characters in this Textbox.", "Textbox", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
+            if (_customerManager.IsNameExist(cus))
             {
                 MessageBox.Show(nameTextBox.Text + "Already Exits");
                 Clear();
@@ -115,12 +140,21 @@ namespace Customer
             }
 
 
+            cus.Code = codeTextBox.Text;
+            cus.Name = nameTextBox.Text;
+            cus.Contact = contactTextBox.Text;
+            cus.Address = addressTextBox.Text;
+            cus.District = districtComboBox.Text;
 
-            if (_customerManager.Add(nameTextBox.Text, contactTextBox.Text, addressTextBox.Text))
+
+            if (_customerManager.Add(cus))
             {
                 MessageBox.Show("Saved");
                 dataGridView.DataSource = _customerManager.ShowData();
             }
+
+
+
             else
             {
                 MessageBox.Show("Not Saved");
@@ -133,10 +167,11 @@ namespace Customer
         private void DataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             Clear();
-            nameTextBox.Text = dataGridView[0, e.RowIndex].Value.ToString();
-            contactTextBox.Text = dataGridView[1, e.RowIndex].Value.ToString();
+            codeTextBox.Text = dataGridView[0, e.RowIndex].Value.ToString();
+            nameTextBox.Text = dataGridView[1, e.RowIndex].Value.ToString();
             addressTextBox.Text = dataGridView[2, e.RowIndex].Value.ToString();
-
+            contactTextBox.Text = dataGridView[3, e.RowIndex].Value.ToString();
+            districtComboBox.Text = dataGridView[4, e.RowIndex].Value.ToString();
             //id = Convert.ToInt32(showDataGridView[0, e.RowIndex].Value);
         }
 
@@ -156,15 +191,25 @@ namespace Customer
         {
 
 
+            Cus cus = new Cus();
+
+
             if (nameTextBox.Text == "")
             {
                 MessageBox.Show("Please enter Name.");
                 return;
             }
+
+            cus.Code = codeTextBox.Text;
+            cus.Name = nameTextBox.Text;
+            cus.Contact = contactTextBox.Text;
+            cus.Address = addressTextBox.Text;
+            cus.District = districtComboBox.Text;
+
             try
             {
 
-                if (_customerManager.Delete(nameTextBox.Text))
+                if (_customerManager.Delete(cus))
                 {
                     MessageBox.Show("Deleted");
                 }
@@ -194,7 +239,9 @@ namespace Customer
 
 
         private void searchButton_Click(object sender, EventArgs e)
-
+           
+            
+           
 
         {
             if (searchTextBox.Text == "")
@@ -206,7 +253,7 @@ namespace Customer
             try
             {
 
-                if (Search(nameTextBox.Text, contactTextBox.Text, addressTextBox.Text))
+                if (Search(codeTextBox.Text,nameTextBox.Text, contactTextBox.Text, addressTextBox.Text, districtComboBox.Text))
                 {
 
 
@@ -230,14 +277,14 @@ namespace Customer
 
         }
 
-        public bool Search(string nameTextBox, string contactTextBox, string addressTextBox)
+        public bool Search(string codeTextBox,string nameTextBox, string contactTextBox, string addressTextBox, string comboTextBox)
         {
             bool isSearch = false;
             try
             {
 
                 SqlConnection sqlConnection = new SqlConnection(connectionString);
-                string commandString = @"SELECT Name,Contact,Address FROM Customer WHERE Name = '" + searchTextBox.Text + "' ";
+                string commandString = @"SELECT Code,Name,Contact,Address, District FROM Customer WHERE Name = '" + searchTextBox.Text + "' ";
                 SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
 
                 SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
@@ -266,19 +313,16 @@ namespace Customer
             return isSearch;
         }
 
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
 
+        }
 
-
-
-
-
-
-
-
-
-
-
-
+        private void CustomerUI_Load(object sender, EventArgs e)
+        {
+           districtComboBox.DataSource =  _customerManager.cusCombo(); ;
+        }
     }
 }
 
